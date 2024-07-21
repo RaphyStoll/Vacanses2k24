@@ -8,7 +8,7 @@ int main()
         printf("Test 1 failed\n");
         passed_tests = 0;
     }
-    if (ft_strncmp("Hello", "Hellz", 5) != 0)
+    if (ft_strncmp("Hello", "Hello", 5) != 0)
     {
         printf("Test 2 failed\n");
         passed_tests = 0;
