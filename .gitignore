@@ -1,0 +1,6 @@
+.DS_STORE
+.vscode
+*.o
+*.out
+script_bash.sh
+libft.a
