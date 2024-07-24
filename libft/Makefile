@@ -1,22 +1,17 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: raphael <raphael@student.42.fr>            +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/07/18 21:06:16 by raphael           #+#    #+#              #
-#    Updated: 2024/07/21 20:51:06 by raphael          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
+# Nom de la bibliothèque
 NAME = libft.a
 
+# Commandes
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra
 AR = ar rcs
 RM = rm -f
+MKDIR = mkdir -p
 
+# Répertoire pour les fichiers objets
+OBJDIR = objects
+
+# Fichiers sources et objets
 FILES = ft_isalpha \
         ft_isdigit \
         ft_isalnum \
@@ -40,30 +35,35 @@ FILES = ft_isalpha \
         ft_atoi \
         ft_calloc \
         ft_strdup \
-		ft_substr \
-		ft_strjoin \
+        ft_substr \
+        ft_strjoin \
+        ft_strtrim \
+        ft_split
 
 SRCS = $(addsuffix .c, $(FILES))
-OBJS = $(addsuffix .o, $(FILES))
+OBJS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(FILES)))
 
-%.o: %.c
-	@echo "Compiling $< -> $@"
+# Compilation des fichiers objets
+$(OBJDIR)/%.o: %.c
+	$(MKDIR) $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+# Création de la bibliothèque
 $(NAME): $(OBJS)
-	@echo "Creating library $@"
 	$(AR) $@ $^
 
+# Cible par défaut
 all: $(NAME)
 
+# Nettoyage des fichiers objets
 clean:
-	@echo "Cleaning objects"
 	$(RM) $(OBJS)
 
+# Nettoyage complet
 fclean: clean
-	@echo "Cleaning library"
 	$(RM) $(NAME)
 
+# Rebuild complet
 re: fclean all
 
 .PHONY: all clean fclean re
