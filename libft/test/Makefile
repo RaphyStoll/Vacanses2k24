@@ -26,32 +26,35 @@ FILES = test_ft_isalpha \
 		test_ft_calloc \
 		test_ft_strdup \
 		test_ft_substr \
-		test_ft_strjoin \
+		test_ft_strjoin
 
 # Répertoire de sortie
 OUTPUT_DIR = ../output
+
+# Noms de fichiers de sortie avec extension .out
+OUTPUT_FILES = $(addsuffix .out, $(addprefix $(OUTPUT_DIR)/, $(FILES)))
 
 # Drapeaux de compilation
 CFLAGS = -Werror -Wextra -Wall -I ../libft
 
 # Règle par défaut
-all: $(OUTPUT_DIR) $(FILES)
+all: $(OUTPUT_DIR) $(OUTPUT_FILES)
 
 # Créer le répertoire de sortie si nécessaire
 $(OUTPUT_DIR):
-		mkdir -p $(OUTPUT_DIR)
+	mkdir -p $(OUTPUT_DIR)
 
 # Règle de compilation des fichiers de test
-$(FILES): %: %.c ../libft.a
-		gcc $(CFLAGS) $< ../libft.a -o $(OUTPUT_DIR)/$@
+$(OUTPUT_FILES): $(OUTPUT_DIR)/%.out: %.c ../libft.a
+	gcc $(CFLAGS) $< ../libft.a -o $@
 
 # Règle de nettoyage
 clean:
-		rm -f $(addprefix $(OUTPUT_DIR)/, $(FILES))
+	rm -f $(OUTPUT_FILES)
 
 fclean: clean
-		rm -rf $(OUTPUT_DIR)
-		$(RM) $(files)
+	rm -rf $(OUTPUT_DIR)
+	$(RM) $(FILES)
 
 re: fclean all
 
