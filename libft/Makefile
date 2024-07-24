@@ -6,7 +6,7 @@
 #    By: raphael <raphael@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/18 21:06:16 by raphael           #+#    #+#              #
-#    Updated: 2024/07/21 02:14:31 by raphael          ###   ########.fr        #
+#    Updated: 2024/07/21 20:51:06 by raphael          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,9 @@ FILES = ft_isalpha \
         ft_strnstr \
         ft_atoi \
         ft_calloc \
-        ft_strdup
+        ft_strdup \
+		ft_substr \
+		ft_strjoin \
 
 SRCS = $(addsuffix .c, $(FILES))
 OBJS = $(addsuffix .o, $(FILES))

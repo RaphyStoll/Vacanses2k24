@@ -1,4 +1,7 @@
 # Nom des fichiers de test
+AR = ar rcs
+RM = rm -f
+
 FILES = test_ft_isalpha \
 		test_ft_isdigit \
 		test_ft_isalnum \
@@ -21,7 +24,9 @@ FILES = test_ft_isalpha \
 		test_ft_strnstr \
 		test_ft_atoi \
 		test_ft_calloc \
-		test_ft_strdup
+		test_ft_strdup \
+		test_ft_substr \
+		test_ft_strjoin \
 
 # Répertoire de sortie
 OUTPUT_DIR = ../output
@@ -44,4 +49,10 @@ $(FILES): %: %.c ../libft.a
 clean:
 		rm -f $(addprefix $(OUTPUT_DIR)/, $(FILES))
 
-.PHONY: all clean
+fclean: clean
+		rm -rf $(OUTPUT_DIR)
+		$(RM) $(files)
+
+re: fclean all
+
+.PHONY: all clean fclean re

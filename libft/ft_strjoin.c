@@ -1,28 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: raphael <raphael@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/21 18:26:21 by raphael           #+#    #+#             */
-/*   Updated: 2024/07/21 18:26:22 by raphael          ###   ########.fr       */
+/*   Created: 2024/07/21 20:28:03 by raphael           #+#    #+#             */
+/*   Updated: 2024/07/21 21:27:31 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdlib.h>
+#include <stdio.h>
 
-void	*ft_calloc(size_t count, size_t size)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
-	void	*ptr;
-	size_t	total_size;
+	char	*dest;
+	int		count;
+	int		count2;
 
-	total_size = count * size;
-	ptr = malloc(total_size);
-	if (!ptr)
-	{
+	count = 0;
+	if (!s1 || !s2)
 		return (NULL);
+	dest = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!dest)
+		return (NULL);
+	while (s1[count])
+	{
+		dest[count] = s1[count];
+		count++;
 	}
-	ft_memset(ptr, 0, total_size);
-	return (ptr);
+	count2 = count;
+	count = 0;
+	while (s2[count])
+	{
+		dest[count2] = s2[count];
+		count++;
+		count2++;
+	}
+	dest[count2] = '\0';
+	return (dest);
 }
