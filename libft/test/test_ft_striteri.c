@@ -31,10 +31,10 @@ int main()
     run_test("abcde", "AbCdE", "test1");
     run_test("ABCDE", "AbCdE", "test2");
     run_test("12345", "12345", "test3");
-    run_test("a1b2c3", "A1b2C3", "test4");
+    run_test("a1b2c3", "A1B2C3", "test4");
     run_test("", "", "test5");
     run_test("a", "A", "test6");
-    run_test("Z", "z", "test7");
+    run_test("Z", "Z", "test7");
     run_test("Hello World!", "HeLlO WoRlD!", "test8");
     run_test("HeLlO WoRlD!", "HeLlO WoRlD!", "test9");
     run_test("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "AbCdEfGhIjKlMnOpQrStUvWxYz", "test10");
