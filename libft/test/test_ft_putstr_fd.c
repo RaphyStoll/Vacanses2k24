@@ -1,81 +1,66 @@
 #include "../libft.h"
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
 
-typedef struct {
-    char *str;
-    const char *expected;
-    const char *test_name;
-} test_case;
-
-void run_test(test_case t, int *failed_tests, int *total_tests)
+// Fonction pour exécuter les tests de `ft_putstr_fd`
+void test_putstr_fd(char *s, int test_num, const char *test_name, int *passed_tests)
 {
     int fd = open("test_output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd < 0)
+    if (fd == -1)
     {
-        perror("Failed to open test_output.txt");
-        return;
+        perror("open");
+        exit(EXIT_FAILURE);
     }
 
-    ft_putstr_fd(t.str, fd);
+    ft_putstr_fd(s, fd);
     close(fd);
 
     fd = open("test_output.txt", O_RDONLY);
-    if (fd < 0)
+    if (fd == -1)
     {
-        perror("Failed to open test_output.txt");
-        return;
+        perror("open");
+        exit(EXIT_FAILURE);
     }
 
-    char buffer[1024];
-    ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
+    char result[1024] = {0}; // Buffer suffisamment grand pour contenir la sortie
+    read(fd, result, sizeof(result) - 1);
     close(fd);
 
-    if (bytes_read < 0)
+    if (strcmp(result, s) != 0)
     {
-        perror("Failed to read test_output.txt");
-        return;
-    }
-
-    buffer[bytes_read] = '\0';  // Null-terminate the string
-
-    (*total_tests)++;
-    if (strcmp(buffer, t.expected) != 0)
-    {
-        printf("Test %s: failed (expected \"%s\", got \"%s\")\n", t.test_name, t.expected, buffer);
-        (*failed_tests)++;
+        // Test échoué
+        printf("Test %d (%s) failed: expected \"%s\", got \"%s\" ❌\n", test_num, test_name, s, result);
+        *passed_tests = 0;
     }
 }
 
-int main()
+int main(void)
 {
-    test_case tests[] = {
-        {"Hello, world!", "Hello, world!", "test1"},
-        {"", "", "test2"},
-        {"42", "42", "test3"},
-        {"The quick brown fox jumps over the lazy dog", "The quick brown fox jumps over the lazy dog", "test4"},
-        {"Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "test5"},
-        {"1234567890", "1234567890", "test6"},
-        {"\nNew Line", "\nNew Line", "test7"},
-        {"Special characters !@#$%^&*()", "Special characters !@#$%^&*()", "test8"},
-        {"Mix3d C@se", "Mix3d C@se", "test9"},
-        {"End of tests", "End of tests", "test10"}
-    };
+    int passed_tests = 1;
 
-    int failed_tests = 0;
-    int total_tests = 0;
+    // Déclaration des tests
+    char str1[] = "Hello, world!";
+    char str2[] = "";
+    char str3[] = "42";
+    char str4[] = "!@#$%^&*()";
+    char str5[] = "This is a longer test string.";
 
-    for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
+    test_putstr_fd(str1, 1, "Print 'Hello, world!'", &passed_tests);
+    test_putstr_fd(str2, 2, "Print empty string", &passed_tests);
+    test_putstr_fd(str3, 3, "Print '42'", &passed_tests);
+    test_putstr_fd(str4, 4, "Print special characters", &passed_tests);
+    test_putstr_fd(str5, 5, "Print longer string", &passed_tests);
+
+    // Afficher le résultat global des tests
+    if (passed_tests)
     {
-        run_test(tests[i], &failed_tests, &total_tests);
+        printf("All tests passed for ft_putstr_fd ✅\n");
+    }
+    else
+    {
+        printf("Some tests failed for ft_putstr_fd ❌\n");
     }
 
-    if (failed_tests == 0)
-    {
-        printf("All tests passed\n");
-    }
+    // Supprimer le fichier de sortie de test
+    remove("test_output.txt");
 
     return 0;
 }

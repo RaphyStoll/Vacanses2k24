@@ -6,7 +6,7 @@
 /*   By: raphael <raphael@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 23:12:04 by raphael           #+#    #+#             */
-/*   Updated: 2024/07/27 23:55:06 by raphael          ###   ########.fr       */
+/*   Updated: 2024/07/28 16:57:16 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <stdio.h>
+#include <ctype.h>
 
 typedef struct s_list
 {

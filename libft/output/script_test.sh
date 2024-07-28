@@ -8,22 +8,22 @@ run_test() {
         # Exécuter le test
         ./$test_name
         if [ $? -ne 0 ]; then
-            echo "Test $test_name failed."
+            echo -e "Test $test_name failed.\n"
         else
-            echo "Test $test_name passed."
+            echo -e "Test $test_name passed.\n"
         fi
 
         # Demander confirmation pour continuer
         read -p "Do you want to continue? (y/n/r): " choice
         case $choice in
-            y)
+            y|Y)
                 return 0
                 ;;
-            n)
+            n|N)
                 echo "Stopping tests."
-                exit 0
+                return 1
                 ;;
-            r)
+            r|R)
                 echo "Restarting $test_name..."
                 ;;
             *)
@@ -45,6 +45,16 @@ run_all_tests() {
         fi
     done
 
+    if [ "$include_bonus" = true ]; then
+        for test in "${testsBonus[@]}"; do
+            ./$test
+            if [ $? -ne 0 ]; then
+                all_passed=false
+                echo "Test $test failed."
+            fi
+        done
+    fi
+
     if $all_passed; then
         echo "-----> all tests passed <-----"
     else
@@ -54,6 +64,7 @@ run_all_tests() {
 
 # Liste des tests à exécuter
 tests=(
+    "test_ft_isalpha.out"
     "test_ft_isdigit.out"
     "test_ft_isalnum.out"
     "test_ft_isascii.out"
@@ -87,6 +98,9 @@ tests=(
     "test_ft_putstr_fd.out"
     "test_ft_putendl_fd.out"
     "test_ft_putnbr_fd.out"
+)
+
+testsBonus=(
     "test_ft_lstnew.out"
     "test_ft_lstadd_front.out"
     "test_ft_lstdelone.out"
@@ -98,12 +112,81 @@ tests=(
     "test_ft_lstmap.out"
 )
 
-# Exécuter chaque test individuellement avec demande de confirmation
-for test in "${tests[@]}"; do
-    run_test $test
-done
+# Variable pour inclure les tests bonus
+include_bonus=false
 
-echo "--------------------------------"
+# Demander le mode d'exécution
+read -p "Do you want to run in normal mode or auto-run mode? (n/a): " mode
+case $mode in
+    n|N)
+        mode="normal"
+        ;;
+    a|A)
+        mode="auto"
+        ;;
+    *)
+        echo "Invalid option. Exiting."
+        exit 1
+        ;;
+esac
 
-# Exécuter tous les tests automatiquement
-run_all_tests
+# Demander le répertoire des tests
+read -p "Enter the directory containing the test executables (default: ./): " test_dir
+test_dir=${test_dir:-./}
+
+# Vérifier si le répertoire existe
+if [ ! -d "$test_dir" ]; then
+    echo "Directory $test_dir does not exist."
+    exit 1
+fi
+
+if [ "$mode" = "normal" ]; then
+    # Exécuter chaque test individuellement avec demande de confirmation
+    for test in "${tests[@]}"; do
+        (cd "$test_dir" && run_test $test)
+        if [ $? -ne 0 ]; then
+            exit 0
+        fi
+    done
+
+    echo "--------------------------------"
+    echo "Start tests bonus"
+    echo "--------------------------------"
+
+    # Demander si on veut exécuter les tests bonus
+    read -p "Do you want to run bonus tests? (y/n): " choice
+    case $choice in
+        y|Y)
+            include_bonus=true
+            for test in "${testsBonus[@]}"; do
+                (cd "$test_dir" && run_test $test)
+                if [ $? -ne 0 ]; then
+                    exit 0
+                fi
+            done
+            ;;
+        n|N)
+            echo "Skipping bonus tests."
+            ;;
+        *)
+            echo "Invalid option. Skipping bonus tests."
+            ;;
+    esac
+
+    # Demander confirmation pour relancer tous les tests automatiquement
+    read -p "Do you want to rerun all tests automatically? (y/n): " rerun_choice
+    case $rerun_choice in
+        y|Y)
+            (cd "$test_dir" && run_all_tests)
+            ;;
+        n|N)
+            echo "Skipping rerun of all tests."
+            ;;
+        *)
+            echo "Invalid option. Skipping rerun of all tests."
+            ;;
+    esac
+else
+    # Exécuter tous les tests automatiquement
+    (cd "$test_dir" && run_all_tests)
+fi

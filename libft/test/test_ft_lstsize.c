@@ -1,23 +1,21 @@
 #include "../libft.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-void run_test(t_list *lst, int expected_size, const char *test_name)
+// Fonction pour exécuter les tests de `ft_lstsize`
+void test_lstsize(t_list *lst, int expected_size, int test_num, const char *test_name, int *passed_tests)
 {
     int size = ft_lstsize(lst);
-    if (size == expected_size)
+    if (size != expected_size)
     {
-        // Test passed
-    }
-    else
-    {
-        printf("Test %s: failed (expected %d, got %d)\n", test_name, expected_size, size);
+        // Test échoué
+        printf("Test %d (%s) failed: attendu %d, obtenu %d ❌\n", test_num, test_name, expected_size, size);
+        *passed_tests = 0;
     }
 }
 
-int main()
+int main(void)
 {
+    int passed_tests = 1;
+
     t_list *node1 = ft_lstnew("Node 1");
     t_list *node2 = ft_lstnew("Node 2");
     t_list *node3 = ft_lstnew("Node 3");
@@ -29,29 +27,37 @@ int main()
     node3->next = node4;
     node4->next = node5;
 
-    run_test(NULL, 0, "test1");               // Test empty list
-    run_test(node1, 5, "test2");              // Test list with 5 elements
-    run_test(node2, 4, "test3");              // Test list starting from second element
-    run_test(node3, 3, "test4");              // Test list starting from third element
-    run_test(node4, 2, "test5");              // Test list starting from fourth element
-    run_test(node5, 1, "test6");              // Test list starting from fifth element
+    // Déclaration des tests et leurs résultats attendus
+    test_lstsize(NULL, 0, 1, "Empty list", &passed_tests);
+    test_lstsize(node1, 5, 2, "List with 5 elements", &passed_tests);
+    test_lstsize(node2, 4, 3, "List starting from second element", &passed_tests);
+    test_lstsize(node3, 3, 4, "List starting from third element", &passed_tests);
+    test_lstsize(node4, 2, 5, "List starting from fourth element", &passed_tests);
+    test_lstsize(node5, 1, 6, "List starting from fifth element", &passed_tests);
 
-    // Add more tests
     t_list *single_node = ft_lstnew("Single Node");
-    run_test(single_node, 1, "test7");        // Test single element list
+    test_lstsize(single_node, 1, 7, "Single element list", &passed_tests);
 
     t_list *head = NULL;
-    run_test(head, 0, "test8");               // Test another empty list
+    test_lstsize(head, 0, 8, "Another empty list", &passed_tests);
 
     t_list *node6 = ft_lstnew("Node 6");
     t_list *node7 = ft_lstnew("Node 7");
     node6->next = node7;
-    run_test(node6, 2, "test9");              // Test list with 2 elements
+    test_lstsize(node6, 2, 9, "List with 2 elements", &passed_tests);
 
     t_list *node8 = ft_lstnew("Node 8");
-    run_test(node8, 1, "test10");             // Test another single element list
+    test_lstsize(node8, 1, 10, "Another single element list", &passed_tests);
 
-    printf("All tests passed\n");
+    // Afficher le résultat global des tests
+    if (passed_tests)
+    {
+        printf("All tests passed for ft_lstsize ✅\n");
+    }
+    else
+    {
+        printf("Some tests failed for ft_lstsize ❌\n");
+    }
 
     // Clean up allocated memory
     t_list *current = node1;

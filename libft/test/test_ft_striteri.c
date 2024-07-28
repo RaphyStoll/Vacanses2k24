@@ -1,7 +1,4 @@
 #include "../libft.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 // Fonction de transformation pour les tests
 void test_transform(unsigned int i, char *c)
@@ -13,31 +10,43 @@ void test_transform(unsigned int i, char *c)
 }
 
 // Fonction de test
-void run_test(char *input, char *expected, const char *test_name)
+void test_striteri(char *input, char *expected, int test_num, const char *test_name, int *passed_tests)
 {
     char *s = strdup(input);
     ft_striteri(s, test_transform);
-    if (strcmp(s, expected) == 0)
-        printf("Test %s: passed\n", test_name);
-    else
+    if (strcmp(s, expected) != 0)
     {
-        printf("Test %s: failed (expected \"%s\", got \"%s\")\n", test_name, expected, s);
+        printf("Test %d (%s) failed: expected \"%s\", got \"%s\" ❌\n", test_num, test_name, expected, s);
+        *passed_tests = 0;
     }
     free(s);
 }
 
-int main()
+int main(void)
 {
-    run_test("abcde", "AbCdE", "test1");
-    run_test("ABCDE", "AbCdE", "test2");
-    run_test("12345", "12345", "test3");
-    run_test("a1b2c3", "A1B2C3", "test4");
-    run_test("", "", "test5");
-    run_test("a", "A", "test6");
-    run_test("Z", "Z", "test7");
-    run_test("Hello World!", "HeLlO WoRlD!", "test8");
-    run_test("HeLlO WoRlD!", "HeLlO WoRlD!", "test9");
-    run_test("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "AbCdEfGhIjKlMnOpQrStUvWxYz", "test10");
+    int passed_tests = 1;
+
+    // Déclaration des tests et leurs résultats attendus
+    test_striteri("abcde", "AbCdE", 1, "test1", &passed_tests);
+    test_striteri("ABCDE", "AbCdE", 2, "test2", &passed_tests);
+    test_striteri("12345", "12345", 3, "test3", &passed_tests);
+    test_striteri("a1b2c3", "A1B2C3", 4, "test4", &passed_tests);
+    test_striteri("", "", 5, "test5", &passed_tests);
+    test_striteri("a", "A", 6, "test6", &passed_tests);
+    test_striteri("Z", "Z", 7, "test7", &passed_tests);
+    test_striteri("Hello World!", "HeLlO WoRlD!", 8, "test8", &passed_tests);
+    test_striteri("HeLlO WoRlD!", "HeLlO WoRlD!", 9, "test9", &passed_tests);
+    test_striteri("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "AbCdEfGhIjKlMnOpQrStUvWxYz", 10, "test10", &passed_tests);
+
+    // Afficher le résultat global des tests
+    if (passed_tests)
+    {
+        printf("All tests passed for ft_striteri ✅\n");
+    }
+    else
+    {
+        printf("Some tests failed for ft_striteri ❌\n");
+    }
 
     return 0;
 }

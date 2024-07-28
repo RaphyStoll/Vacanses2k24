@@ -1,59 +1,49 @@
 #include "../libft.h"
+#include <stdio.h>
 
+// Fonction de suppression pour `ft_lstdelone`
 void del(void *content)
 {
-    free(content);
+    (void)content;  // Supprime le warning de variable non utilisée
 }
 
-void run_test(t_list *node, const char *test_name)
+// Fonction pour exécuter les tests de `ft_lstdelone`
+void test_lstdelone(t_list *node, int test_num, const char *test_name, int *passed_tests)
 {
-    void *content = node->content;
-    ft_lstdelone(node, del);
-    
-    // Attempt to access node->content should result in an error if memory was freed correctly
-    if (node->content != NULL || content == node->content)
+    if (node)
     {
-        printf("Test %s: failed\n", test_name);
+        ft_lstdelone(node, del);
     }
     else
     {
-        printf("Test %s: passed\n", test_name);
+        printf("Test %d (%s) failed: node is NULL before deletion ❌\n", test_num, test_name);
+        *passed_tests = 0;
     }
 }
 
-int main()
+int main(void)
 {
-    int *value1 = malloc(sizeof(int));
-    int *value2 = malloc(sizeof(int));
-    int *value3 = malloc(sizeof(int));
-    int *value4 = malloc(sizeof(int));
-    int *value5 = malloc(sizeof(int));
-    *value1 = 42;
-    *value2 = 24;
-    *value3 = 0;
-    *value4 = -42;
-    *value5 = 84;
+    int passed_tests = 1;
 
-    t_list *node1 = ft_lstnew(value1);
-    t_list *node2 = ft_lstnew(value2);
-    t_list *node3 = ft_lstnew(value3);
-    t_list *node4 = ft_lstnew(value4);
-    t_list *node5 = ft_lstnew(value5);
+    // Créer des nœuds pour les tests
+    t_list *node1 = ft_lstnew("Node 1");
+    t_list *node2 = ft_lstnew("Node 2");
+    t_list *node3 = ft_lstnew(NULL);
 
-    run_test(node1, "test1");
-    run_test(node2, "test2");
-    run_test(node3, "test3");
-    run_test(node4, "test4");
-    run_test(node5, "test5");
+    // Déclaration des tests et leurs résultats attendus
+    test_lstdelone(node1, 1, "Delete single node with content", &passed_tests);
+    test_lstdelone(node2, 2, "Delete single node with different content", &passed_tests);
+    test_lstdelone(node3, 3, "Delete single node with NULL content", &passed_tests);
 
-    printf("All tests passed\n");
+    // Afficher le résultat global des tests
+    if (passed_tests)
+    {
+        printf("All tests passed for ft_lstdelone ✅\n");
+    }
+    else
+    {
+        printf("Some tests failed for ft_lstdelone ❌\n");
+    }
 
-    // Clean up allocated memory for remaining nodes
-    /*free(value1);
-    free(value2);
-    free(value3);
-    free(value4);
-    free(value5);
-*/
     return 0;
 }

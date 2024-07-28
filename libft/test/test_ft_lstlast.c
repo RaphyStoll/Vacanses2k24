@@ -1,71 +1,76 @@
 #include "../libft.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-void run_test(t_list *lst, t_list *expected_last, const char *test_name)
+// Fonction pour exécuter les tests de `ft_lstlast`
+void test_lstlast(t_list *lst, t_list *expected_last, int test_num, const char *test_name, int *passed_tests)
 {
     t_list *last = ft_lstlast(lst);
-    if (last == expected_last)
+    if (last != expected_last)
     {
-        // Test passed
-    }
-    else
-    {
-        printf("Test %s: failed (expected %p, got %p)\n", test_name, (void*)expected_last, (void*)last);
+        // Test échoué
+        printf("Test %d (%s) failed: expected last node with content '%s', got '%s' ❌\n", test_num, test_name, (char *)expected_last->content, last ? (char *)last->content : "NULL");
+        *passed_tests = 0;
     }
 }
 
-int main()
+int main(void)
 {
-    t_list *node1 = ft_lstnew("Node 1");
-    t_list *node2 = ft_lstnew("Node 2");
-    t_list *node3 = ft_lstnew("Node 3");
-    t_list *node4 = ft_lstnew("Node 4");
-    t_list *node5 = ft_lstnew("Node 5");
+    int passed_tests = 1;
 
-    node1->next = node2;
-    node2->next = node3;
-    node3->next = node4;
-    node4->next = node5;
+    // Créer des listes pour les tests
+    t_list *lst1 = ft_lstnew("First");
+    t_list *expected_last1 = lst1;
 
-    run_test(NULL, NULL, "test1");             // Test empty list
-    run_test(node1, node5, "test2");           // Test list with 5 elements
-    run_test(node2, node5, "test3");           // Test list starting from second element
-    run_test(node3, node5, "test4");           // Test list starting from third element
-    run_test(node4, node5, "test5");           // Test list starting from fourth element
-    run_test(node5, node5, "test6");           // Test list starting from fifth element
+    t_list *lst2 = ft_lstnew("First");
+    t_list *second2 = ft_lstnew("Second");
+    t_list *expected_last2 = second2;
+    lst2->next = second2;
 
-    // Add more tests
-    t_list *single_node = ft_lstnew("Single Node");
-    run_test(single_node, single_node, "test7"); // Test single element list
+    t_list *lst3 = ft_lstnew("First");
+    t_list *second3 = ft_lstnew("Second");
+    t_list *third3 = ft_lstnew("Third");
+    t_list *expected_last3 = third3;
+    lst3->next = second3;
+    second3->next = third3;
 
-    t_list *head = NULL;
-    run_test(head, NULL, "test8");              // Test another empty list
+    t_list *lst4 = NULL;
+    t_list *expected_last4 = NULL;
 
-    t_list *node6 = ft_lstnew("Node 6");
-    t_list *node7 = ft_lstnew("Node 7");
-    node6->next = node7;
-    run_test(node6, node7, "test9");            // Test list with 2 elements
+    // Déclaration des tests et leurs résultats attendus
+    test_lstlast(lst1, expected_last1, 1, "Single element list", &passed_tests);
+    test_lstlast(lst2, expected_last2, 2, "Two element list", &passed_tests);
+    test_lstlast(lst3, expected_last3, 3, "Three element list", &passed_tests);
+    test_lstlast(lst4, expected_last4, 4, "Empty list", &passed_tests);
 
-    t_list *node8 = ft_lstnew("Node 8");
-    run_test(node8, node8, "test10");           // Test another single element list
-
-    printf("All tests passed\n");
+    // Afficher le résultat global des tests
+    if (passed_tests)
+    {
+        printf("All tests passed for ft_lstlast ✅\n");
+    }
+    else
+    {
+        printf("Some tests failed for ft_lstlast ❌\n");
+    }
 
     // Clean up allocated memory
-    t_list *current = node1;
-    t_list *next;
-    while (current != NULL)
+    t_list *current;
+    while (lst1)
     {
-        next = current->next;
-        free(current);
-        current = next;
+        current = lst1->next;
+        free(lst1);
+        lst1 = current;
     }
-    free(single_node);
-    free(node6);
-    free(node7);
-    free(node8);
+    while (lst2)
+    {
+        current = lst2->next;
+        free(lst2);
+        lst2 = current;
+    }
+    while (lst3)
+    {
+        current = lst3->next;
+        free(lst3);
+        lst3 = current;
+    }
 
     return 0;
 }

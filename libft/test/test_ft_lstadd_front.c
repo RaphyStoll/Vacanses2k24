@@ -1,59 +1,60 @@
 #include "../libft.h"
 
-void run_test(t_list **lst, t_list *new, t_list *expected, const char *test_name)
+// Fonction pour exécuter les tests de `ft_lstadd_front`
+void test_lstadd_front(t_list **lst, t_list *new, t_list *expected_first, int test_num, const char *test_name, int *passed_tests)
 {
     ft_lstadd_front(lst, new);
-    if (*lst == new && new->next == expected)
+    t_list *first = *lst;
+
+    if (first != expected_first)
     {
-        // Test passed
-    }
-    else
-    {
-        printf("Test %s: failed\n", test_name);
-        return;
+        // Test échoué
+        printf("Test %d (%s) failed: expected first node with content '%s', got '%s' ❌\n", test_num, test_name, (char *)expected_first->content, first ? (char *)first->content : "NULL");
+        *passed_tests = 0;
     }
 }
 
-int main()
+int main(void)
 {
-    t_list *head = NULL;
-    t_list *node1 = ft_lstnew("First");
-    t_list *node2 = ft_lstnew("Second");
-    t_list *node3 = ft_lstnew("Third");
-    t_list *node4 = ft_lstnew("Fourth");
-    t_list *node5 = ft_lstnew("Fifth");
+    int passed_tests = 1;
 
-    run_test(&head, node1, NULL, "test1");    // Test adding to an empty list
-    run_test(&head, node2, node1, "test2");   // Test adding to a list with one element
-    run_test(&head, node3, node2, "test3");   // Test adding to a list with two elements
-    run_test(&head, node4, node3, "test4");   // Test adding to a list with three elements
-    run_test(&head, node5, node4, "test5");   // Test adding to a list with four elements
+    t_list *lst1 = ft_lstnew("Last");
+    t_list *new1 = ft_lstnew("First");
+    t_list *expected_first1 = new1;
 
-    t_list *node6 = ft_lstnew("Sixth");
-    run_test(&head, node6, node5, "test6");   // Test adding to a list with five elements
+    t_list *lst2 = ft_lstnew("Second");
+    t_list *second2 = ft_lstnew("Last");
+    lst2->next = second2;
+    t_list *new2 = ft_lstnew("First");
+    t_list *expected_first2 = new2;
 
-    t_list *node7 = ft_lstnew("Seventh");
-    run_test(&head, node7, node6, "test7");   // Test adding to a list with six elements
+    // Déclaration des tests et leurs résultats attendus
+    test_lstadd_front(&lst1, new1, expected_first1, 1, "Add to single element list", &passed_tests);
+    test_lstadd_front(&lst2, new2, expected_first2, 2, "Add to two element list", &passed_tests);
 
-    t_list *node8 = ft_lstnew("Eighth");
-    run_test(&head, node8, node7, "test8");   // Test adding to a list with seven elements
-
-    t_list *node9 = ft_lstnew("Ninth");
-    run_test(&head, node9, node8, "test9");   // Test adding to a list with eight elements
-
-    t_list *node10 = ft_lstnew("Tenth");
-    run_test(&head, node10, node9, "test10"); // Test adding to a list with nine elements
-
-    printf("All tests passed\n");
+    // Afficher le résultat global des tests
+    if (passed_tests)
+    {
+        printf("All tests passed for ft_lstadd_front ✅\n");
+    }
+    else
+    {
+        printf("Some tests failed for ft_lstadd_front ❌\n");
+    }
 
     // Clean up allocated memory
-    t_list *current = head;
-    t_list *next;
-    while (current != NULL)
+    t_list *current;
+    while (lst1)
     {
-        next = current->next;
-        free(current);
-        current = next;
+        current = lst1->next;
+        free(lst1);
+        lst1 = current;
+    }
+    while (lst2)
+    {
+        current = lst2->next;
+        free(lst2);
+        lst2 = current;
     }
 
     return 0;

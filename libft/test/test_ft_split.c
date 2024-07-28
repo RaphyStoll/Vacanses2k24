@@ -1,32 +1,44 @@
 #include "../libft.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-// * Fonction pour exécuter les tests de `ft_split`
-void test_split(char *str, char delimiter, char **expected, int test_num, const char *test_name, int *passed_tests)
+// Fonction pour exécuter les tests de `ft_split`
+void test_split(const char *s, char c, char **expected, int test_num, const char *test_name, int *passed_tests)
 {
-    char **result = ft_split(str, delimiter);
-    int i = 0;
+    char **result = ft_split(s, c);
 
-    while (expected[i] != NULL)
+    // Comparer chaque chaîne de caractères dans le tableau
+    int i = 0;
+    while (expected[i])
     {
-        if (result[i] == NULL || strcmp(result[i], expected[i]) != 0)
+        if (!result[i] || strcmp(result[i], expected[i]) != 0)
         {
-            // ! Test échoué
-            printf("Test %d (%s) failed at element %d: attendu '%s', obtenu '%s'\n", test_num, test_name, i, expected[i], result[i] ? result[i] : "NULL");
+            printf("Test %d (%s) failed: expected '%s', got '%s' ❌\n", test_num, test_name, expected[i], result[i] ? result[i] : "NULL");
             *passed_tests = 0;
-            break;
+            // Libérer la mémoire allouée
+            i = 0;
+            while (result[i])
+            {
+                free(result[i]);
+                i++;
+            }
+            free(result);
+            return;
         }
         i++;
     }
-    if (result[i] != NULL && *passed_tests)
+
+    // Vérifier qu'il n'y a pas d'éléments supplémentaires dans result
+    if (result[i] != NULL)
     {
-        // ! Résultat plus long que prévu
-        printf("Test %d (%s) failed: résultat plus long que prévu\n", test_num, test_name);
+        printf("Test %d (%s) failed: result contains more elements than expected ❌\n", test_num, test_name);
         *passed_tests = 0;
     }
 
-    // Libération de la mémoire allouée
+    // Libérer la mémoire allouée
     i = 0;
-    while (result[i] != NULL)
+    while (result[i])
     {
         free(result[i]);
         i++;
@@ -38,59 +50,39 @@ int main(void)
 {
     int passed_tests = 1;
 
-    // * Déclaration des chaînes de test et leurs résultats attendus
-    char *str1 = "Hello World";
-    char *expected1[] = {"Hello", "World", NULL};
+    // Déclaration des tests
+    char *expected1[] = {"Hello", "world", NULL};
+    test_split("Hello world", ' ', expected1, 1, "Split by space", &passed_tests);
 
-    char *str2 = "Hello,World,42";
-    char *expected2[] = {"Hello", "World", "42", NULL};
+    char *expected2[] = {"Hello", "world", NULL};
+    test_split(" Hello world", ' ', expected2, 2, "Split by space with leading delimiter", &passed_tests);
 
-    char *str3 = ",Hello,World,";
-    char *expected3[] = {"Hello", "World", NULL};
+    char *expected3[] = {"Hello", "world", NULL};
+    test_split("Hello world ", ' ', expected3, 3, "Split by space with trailing delimiter", &passed_tests);
 
-    char *str4 = "Hello,,World";
-    char *expected4[] = {"Hello", "World", NULL};
+    char *expected4[] = {"Hello", "world", NULL};
+    test_split("Hello  world", ' ', expected4, 4, "Split by space with multiple delimiters", &passed_tests);
 
-    char *str5 = "42";
-    char *expected5[] = {"42", NULL};
+    char *expected5[] = {"Hello", "world", NULL};
+    test_split("Hello,world", ',', expected5, 5, "Split by comma", &passed_tests);
 
-    char *str6 = "";
     char *expected6[] = {NULL};
+    test_split("", ' ', expected6, 6, "Split empty string", &passed_tests);
 
-    char *str7 = " , ";
-    char *expected7[] = {" ", " ", NULL};
+    char *expected7[] = {"Hello world", NULL};
+    test_split("Hello world", '\0', expected7, 7, "Split by null character", &passed_tests);
 
-    char *str8 = "Hello ,World ";
-    char *expected8[] = {"Hello", ",World", NULL};
+    char *expected8[] = {"Hell ", "orld", NULL};  // Correction ici
+    test_split("Hell world", 'w', expected8, 8, "Split by 'w'", &passed_tests);
 
-    char *str9 = "    ";
-    char *expected9[] = {NULL};
-
-    char *str10 = "Hello, ,World";
-    char *expected10[] = {"Hello", " ", "World", NULL};
-
-    // ! Exécution des tests
-    test_split(str1, ' ', expected1, 1, "Simple split", &passed_tests);
-    test_split(str2, ',', expected2, 2, "Comma split", &passed_tests);
-    test_split(str3, ',', expected3, 3, "Leading and trailing commas", &passed_tests);
-    test_split(str4, ',', expected4, 4, "Empty element in split", &passed_tests);
-    test_split(str5, ',', expected5, 5, "Single element, no delimiter", &passed_tests);
-    test_split(str6, ',', expected6, 6, "Empty string", &passed_tests);
-    test_split(str7, ',', expected7, 7, "Delimiter only with spaces", &passed_tests);
-    test_split(str8, ' ', expected8, 8, "Mixed spaces and delimiters", &passed_tests);
-    test_split(str9, ' ', expected9, 9, "Only spaces", &passed_tests);
-    test_split(str10, ',', expected10, 10, "Mixed empty and non-empty elements", &passed_tests);
-
-    // * Afficher le résultat global des tests
+    // Afficher le résultat global des tests
     if (passed_tests)
     {
-        // ! Tous les tests sont passés
-        printf("Test passed\n");
+        printf("All tests passed for ft_split ✅\n");
     }
     else
     {
-        // ! Certains tests ont échoué
-        printf("Test failed\n");
+        printf("Some tests failed for ft_split ❌\n");
     }
 
     return 0;

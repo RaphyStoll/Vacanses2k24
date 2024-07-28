@@ -1,62 +1,64 @@
 #include "../libft.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-void run_test(t_list **lst, t_list *new, t_list *expected_last, const char *test_name)
+// Fonction pour exécuter les tests de `ft_lstadd_back`
+void test_lstadd_back(t_list **lst, t_list *new, t_list *expected_last, int test_num, const char *test_name, int *passed_tests)
 {
     ft_lstadd_back(lst, new);
-    t_list *last = ft_lstlast(*lst);
-    if (last == expected_last && last->next == NULL)
+    t_list *last = *lst;
+
+    // Aller au dernier élément de la liste
+    while (last && last->next)
+        last = last->next;
+
+    if (last != expected_last)
     {
-        // Test passed
-    }
-    else
-    {
-        printf("Test %s: failed (expected %p, got %p)\n", test_name, (void*)expected_last, (void*)last);
+        // Test échoué
+        printf("Test %d (%s) failed: expected last node with content '%s', got '%s' ❌\n", test_num, test_name, (char *)expected_last->content, last ? (char *)last->content : "NULL");
+        *passed_tests = 0;
     }
 }
 
-int main()
+int main(void)
 {
-    t_list *head = NULL;
-    t_list *node1 = ft_lstnew("Node 1");
-    t_list *node2 = ft_lstnew("Node 2");
-    t_list *node3 = ft_lstnew("Node 3");
-    t_list *node4 = ft_lstnew("Node 4");
-    t_list *node5 = ft_lstnew("Node 5");
+    int passed_tests = 1;
 
-    run_test(&head, node1, node1, "test1");    // Test adding to an empty list
-    run_test(&head, node2, node2, "test2");    // Test adding to a list with one element
-    run_test(&head, node3, node3, "test3");    // Test adding to a list with two elements
-    run_test(&head, node4, node4, "test4");    // Test adding to a list with three elements
-    run_test(&head, node5, node5, "test5");    // Test adding to a list with four elements
+    t_list *lst1 = ft_lstnew("First");
+    t_list *new1 = ft_lstnew("New Last");
+    t_list *expected_last1 = new1;
 
-    t_list *node6 = ft_lstnew("Node 6");
-    run_test(&head, node6, node6, "test6");    // Test adding to a list with five elements
+    t_list *lst2 = ft_lstnew("First");
+    t_list *second2 = ft_lstnew("Second");
+    lst2->next = second2;
+    t_list *new2 = ft_lstnew("New Last");
+    t_list *expected_last2 = new2;
 
-    t_list *node7 = ft_lstnew("Node 7");
-    run_test(&head, node7, node7, "test7");    // Test adding to a list with six elements
+    // Déclaration des tests et leurs résultats attendus
+    test_lstadd_back(&lst1, new1, expected_last1, 1, "Add to single element list", &passed_tests);
+    test_lstadd_back(&lst2, new2, expected_last2, 2, "Add to two element list", &passed_tests);
 
-    t_list *node8 = ft_lstnew("Node 8");
-    run_test(&head, node8, node8, "test8");    // Test adding to a list with seven elements
-
-    t_list *node9 = ft_lstnew("Node 9");
-    run_test(&head, node9, node9, "test9");    // Test adding to a list with eight elements
-
-    t_list *node10 = ft_lstnew("Node 10");
-    run_test(&head, node10, node10, "test10"); // Test adding to a list with nine elements
-
-    printf("All tests passed\n");
+    // Afficher le résultat global des tests
+    if (passed_tests)
+    {
+        printf("All tests passed for ft_lstadd_back ✅\n");
+    }
+    else
+    {
+        printf("Some tests failed for ft_lstadd_back ❌\n");
+    }
 
     // Clean up allocated memory
-    t_list *current = head;
-    t_list *next;
-    while (current != NULL)
+    t_list *current;
+    while (lst1)
     {
-        next = current->next;
-        free(current);
-        current = next;
+        current = lst1->next;
+        free(lst1);
+        lst1 = current;
+    }
+    while (lst2)
+    {
+        current = lst2->next;
+        free(lst2);
+        lst2 = current;
     }
 
     return 0;

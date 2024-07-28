@@ -32,12 +32,12 @@ int main(void)
     if (passed_tests)
     {
         // ! Tous les tests sont passés
-        printf("Test passed\n");
+        printf("All tests passed for ft_itoa ✅\n");
     }
     else
     {
         // ! Certains tests ont échoué
-        printf("Test failed\n");
+        printf("Some tests failed for ft_itoa ❌\n");
     }
 
     return 0;

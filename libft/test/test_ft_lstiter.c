@@ -1,132 +1,80 @@
 #include "../libft.h"
 
-void increment(void *content)
+// Fonction pour transformer chaque élément de la liste en majuscule
+void to_upper(void *content)
 {
-    *(int *)content += 1;
+    char *str = (char *)content;
+    while (*str)
+    {
+        *str = toupper(*str);
+        str++;
+    }
 }
 
-void run_test(t_list *lst, int *expected_values, int size, const char *test_name)
+// Fonction pour créer un nouvel élément de liste
+t_list *create_elem(char *content)
 {
-    ft_lstiter(lst, increment);
+    char *content_copy = strdup(content);
+    if (!content_copy)
+        return NULL;
+    t_list *elem = ft_lstnew(content_copy);
+    return elem;
+}
+
+// Fonction pour exécuter les tests de `ft_lstiter`
+void test_lstiter(t_list *lst, void (*f)(void *), const char *expected[], int test_num, const char *test_name, int *passed_tests)
+{
+    ft_lstiter(lst, f);
 
     int i = 0;
     t_list *current = lst;
     while (current)
     {
-        if (*(int *)(current->content) != expected_values[i])
+        if (strcmp(current->content, expected[i]) != 0)
         {
-            printf("Test %s: failed at index %d (expected %d, got %d)\n", test_name, i, expected_values[i], *(int *)(current->content));
-            return;
+            // Test échoué
+            printf("Test %d (%s) failed at element %d: expected '%s', got '%s' ❌\n", test_num, test_name, i, expected[i], (char *)current->content);
+            *passed_tests = 0;
+            break;
         }
         current = current->next;
         i++;
     }
+}
 
-    if (i != size)
+int main(void)
+{
+    int passed_tests = 1;
+
+    // Déclaration des tests
+    t_list *lst1 = create_elem("hello");
+    lst1->next = create_elem("world");
+    lst1->next->next = create_elem("foo");
+    lst1->next->next->next = create_elem("bar");
+
+    const char *expected1[] = {"HELLO", "WORLD", "FOO", "BAR"};
+    test_lstiter(lst1, to_upper, expected1, 1, "Convert all elements to uppercase", &passed_tests);
+
+    // Libérer la mémoire allouée
+    t_list *current = lst1;
+    t_list *next;
+    while (current)
     {
-        printf("Test %s: failed (expected list size %d, got %d)\n", test_name, size, i);
+        next = current->next;
+        free(current->content);
+        free(current);
+        current = next;
+    }
+
+    // Afficher le résultat global des tests
+    if (passed_tests)
+    {
+        printf("All tests passed for ft_lstiter ✅\n");
     }
     else
     {
-        printf("Test %s: passed\n", test_name);
+        printf("Some tests failed for ft_lstiter ❌\n");
     }
-}
-
-int main()
-{
-    int *value1 = malloc(sizeof(int));
-    int *value2 = malloc(sizeof(int));
-    int *value3 = malloc(sizeof(int));
-    int *value4 = malloc(sizeof(int));
-    int *value5 = malloc(sizeof(int));
-    *value1 = 1;
-    *value2 = 2;
-    *value3 = 3;
-    *value4 = 4;
-    *value5 = 5;
-
-    t_list *node1 = ft_lstnew(value1);
-    t_list *node2 = ft_lstnew(value2);
-    t_list *node3 = ft_lstnew(value3);
-    t_list *node4 = ft_lstnew(value4);
-    t_list *node5 = ft_lstnew(value5);
-
-    node1->next = node2;
-    node2->next = node3;
-    node3->next = node4;
-    node4->next = node5;
-
-    int expected_values1[] = {2, 3, 4, 5, 6};
-    run_test(node1, expected_values1, 5, "test1"); // Test list with 5 elements
-
-    t_list *head = NULL;
-    run_test(head, NULL, 0, "test2"); // Test empty list
-
-    // Recreate list with different values
-    *value1 = 10;
-    *value2 = 20;
-    *value3 = 30;
-    *value4 = 40;
-    *value5 = 50;
-
-    node1 = ft_lstnew(value1);
-    node2 = ft_lstnew(value2);
-    node3 = ft_lstnew(value3);
-    node4 = ft_lstnew(value4);
-    node5 = ft_lstnew(value5);
-
-    node1->next = node2;
-    node2->next = node3;
-    node3->next = node4;
-    node4->next = node5;
-
-    int expected_values2[] = {11, 21, 31, 41, 51};
-    run_test(node1, expected_values2, 5, "test3"); // Test list with different values
-
-    // Single element list
-    int *value6 = malloc(sizeof(int));
-    *value6 = 100;
-    t_list *node6 = ft_lstnew(value6);
-
-    int expected_values3[] = {101};
-    run_test(node6, expected_values3, 1, "test4"); // Test single element list
-
-    // Recreate list with more elements
-    *value1 = -1;
-    *value2 = -2;
-    *value3 = -3;
-    *value4 = -4;
-    *value5 = -5;
-
-    node1 = ft_lstnew(value1);
-    node2 = ft_lstnew(value2);
-    node3 = ft_lstnew(value3);
-    node4 = ft_lstnew(value4);
-    node5 = ft_lstnew(value5);
-
-    node1->next = node2;
-    node2->next = node3;
-    node3->next = node4;
-    node4->next = node5;
-
-    int expected_values4[] = {0, -1, -2, -3, -4};
-    run_test(node1, expected_values4, 5, "test5"); // Test list with negative values
-
-    printf("All tests passed\n");
-
-    // Clean up allocated memory
-    free(value1);
-    free(value2);
-    free(value3);
-    free(value4);
-    free(value5);
-    free(value6);
-    free(node1);
-    free(node2);
-    free(node3);
-    free(node4);
-    free(node5);
-    free(node6);
 
     return 0;
 }

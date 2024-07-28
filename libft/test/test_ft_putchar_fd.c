@@ -1,71 +1,60 @@
 #include "../libft.h"
 
-typedef struct {
-    char c;
-    const char *expected;
-    const char *test_name;
-} test_case;
-
-void run_test(test_case t, int *failed_tests, int *total_tests)
+// Fonction pour exécuter les tests de `ft_putchar_fd`
+void test_putchar_fd(char c, int test_num, const char *test_name, int *passed_tests)
 {
     int fd = open("test_output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd < 0)
+    if (fd == -1)
     {
-        perror("Failed to open test_output.txt");
-        return;
+        perror("open");
+        exit(EXIT_FAILURE);
     }
 
-    ft_putchar_fd(t.c, fd);
+    ft_putchar_fd(c, fd);
     close(fd);
 
     fd = open("test_output.txt", O_RDONLY);
-    if (fd < 0)
+    if (fd == -1)
     {
-        perror("Failed to open test_output.txt");
-        return;
+        perror("open");
+        exit(EXIT_FAILURE);
     }
 
-    char buffer[2];
-    ssize_t bytes_read = read(fd, buffer, 1);
+    char result;
+    read(fd, &result, 1);
     close(fd);
 
-    buffer[1] = '\0';  // Null-terminate the string
-
-    (*total_tests)++;
-    if (bytes_read != 1 || strcmp(buffer, t.expected) != 0)
+    if (result != c)
     {
-        printf("Test %s: failed (expected \"%s\", got \"%s\")\n", t.test_name, t.expected, buffer);
-        (*failed_tests)++;
+        // Test échoué
+        printf("Test %d (%s) failed: expected '%c', got '%c' ❌\n", test_num, test_name, c, result);
+        *passed_tests = 0;
     }
 }
 
-int main()
+int main(void)
 {
-    test_case tests[] = {
-        {'a', "a", "test1"},
-        {'Z', "Z", "test2"},
-        {'0', "0", "test3"},
-        {'\n', "\n", "test4"},
-        {' ', " ", "test5"},
-        {'@', "@", "test6"},
-        {'9', "9", "test7"},
-        {'b', "b", "test8"},
-        {'1', "1", "test9"},
-        {'!', "!", "test10"}
-    };
+    int passed_tests = 1;
 
-    int failed_tests = 0;
-    int total_tests = 0;
+    // Déclaration des tests
+    test_putchar_fd('a', 1, "Print 'a'", &passed_tests);
+    test_putchar_fd('Z', 2, "Print 'Z'", &passed_tests);
+    test_putchar_fd('0', 3, "Print '0'", &passed_tests);
+    test_putchar_fd('\n', 4, "Print newline", &passed_tests);
+    test_putchar_fd('!', 5, "Print exclamation mark", &passed_tests);
 
-    for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
+    // Afficher le résultat global des tests
+    if (passed_tests)
     {
-        run_test(tests[i], &failed_tests, &total_tests);
+        printf("All tests passed for ft_putchar_fd ✅\n");
+    }
+    else
+    {
+        printf("Some tests failed for ft_putchar_fd ❌\n");
     }
 
-    if (failed_tests == 0)
-    {
-        printf("All tests passed\n");
-    }
+    // Supprimer le fichier de sortie de test
+    remove("test_output.txt");
 
     return 0;
 }

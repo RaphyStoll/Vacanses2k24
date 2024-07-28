@@ -1,107 +1,44 @@
 #include "../libft.h"
 
-int main()
+// Fonction pour exécuter les tests de `ft_strtrim`
+void test_strtrim(const char *s1, const char *set, const char *expected, int test_num, const char *test_name, int *passed_tests)
+{
+    char *result = ft_strtrim(s1, set);
+
+    if (result == NULL || strcmp(result, expected) != 0)
+    {
+        // Test échoué
+        printf("Test %d (%s) failed: expected '%s', got '%s' ❌\n", test_num, test_name, expected, result ? result : "NULL");
+        *passed_tests = 0;
+    }
+
+    free(result);
+}
+
+int main(void)
 {
     int passed_tests = 1;
-    char *result;
 
-    // Test 1 : Trimer les espaces au début et à la fin
-    result = ft_strtrim("  Hello, World!  ", " ");
-    if (strcmp(result, "Hello, World!") != 0)
-    {
-        printf("Test 1 failed: attendu 'Hello, World!', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
+    // Déclaration des tests
+    test_strtrim("  Hello, world!  ", " ", "Hello, world!", 1, "Trim spaces", &passed_tests);
+    test_strtrim("xxHello, world!xx", "x", "Hello, world!", 2, "Trim 'x'", &passed_tests);
+    test_strtrim("xxHello, world!", "x", "Hello, world!", 3, "Trim 'x' from start", &passed_tests);
+    test_strtrim("Hello, world!xx", "x", "Hello, world!", 4, "Trim 'x' from end", &passed_tests);
+    test_strtrim("  xxHello, world!xx  ", " x", "Hello, world!", 5, "Trim ' ' and 'x'", &passed_tests);
+    test_strtrim("Hello, world!", " ", "Hello, world!", 6, "Trim nothing", &passed_tests);
+    test_strtrim("Hello, world!", "", "Hello, world!", 7, "Trim empty set", &passed_tests);
+    test_strtrim("aaaHello, world!aaa", "a", "Hello, world!", 8, "Trim 'a'", &passed_tests);
+    test_strtrim("", " ", "", 9, "Trim empty string", &passed_tests);
+    test_strtrim("   ", " ", "", 10, "Trim spaces only", &passed_tests);
 
-    // Test 2 : Trimer les tabulations et les nouvelles lignes
-    result = ft_strtrim("\t\nHello, World!\n\t", "\t\n");
-    if (strcmp(result, "Hello, World!") != 0)
-    {
-        printf("Test 2 failed: attendu 'Hello, World!', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
-    // Test 3 : Trimer les caractères spécifiques
-    result = ft_strtrim("abcHello, World!cba", "abc");
-    if (strcmp(result, "Hello, World!") != 0)
-    {
-        printf("Test 3 failed: attendu 'Hello, World!', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
-    // Test 4 : Chaîne sans caractères à trimer
-    result = ft_strtrim("Hello, World!", " ");
-    if (strcmp(result, "Hello, World!") != 0)
-    {
-        printf("Test 4 failed: attendu 'Hello, World!', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
-    // Test 5 : Trimer une chaîne vide
-    result = ft_strtrim("", " ");
-    if (strcmp(result, "") != 0)
-    {
-        printf("Test 5 failed: attendu '', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
-    // Test 6 : Trimer avec un set vide
-    result = ft_strtrim("Hello, World!", "");
-    if (strcmp(result, "Hello, World!") != 0)
-    {
-        printf("Test 6 failed: attendu 'Hello, World!', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
-    // Test 7 : Trimer avec tous les caractères à trimer
-    result = ft_strtrim("abcabc", "abc");
-    if (strcmp(result, "") != 0)
-    {
-        printf("Test 7 failed: attendu '', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
-    // Test 8 : Trimer les caractères en milieu de chaîne
-    result = ft_strtrim("aHello, World!a", "a");
-    if (strcmp(result, "Hello, World!") != 0)
-    {
-        printf("Test 8 failed: attendu 'Hello, World!', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
-    // Test 9 : Trimer les espaces et tabulations en début et fin
-    result = ft_strtrim(" \tHello, World!\t ", " \t");
-    if (strcmp(result, "Hello, World!") != 0)
-    {
-        printf("Test 9 failed: attendu 'Hello, World!', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
-    // Test 10 : Trimer avec une chaîne complète
-    result = ft_strtrim("Hello, World!", "Hello, World!");
-    if (strcmp(result, "") != 0)
-    {
-        printf("Test 10 failed: attendu '', obtenu '%s'\n", result);
-        passed_tests = 0;
-    }
-    free(result);
-
+    // Afficher le résultat global des tests
     if (passed_tests)
     {
-        printf("Tous les tests sont passés pour ft_strtrim\n");
+        printf("All tests passed for ft_strtrim ✅\n");
     }
     else
     {
-        printf("Certains tests ont échoué pour ft_strtrim\n");
+        printf("Some tests failed for ft_strtrim ❌\n");
     }
 
     return 0;
