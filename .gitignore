@@ -2,7 +2,8 @@
 .vscode
 *.o
 *.out
-script_bash.sh
+script_norme.sh
+script_test.sh
 libft.a
 Ztampon.c
 package-lock.json

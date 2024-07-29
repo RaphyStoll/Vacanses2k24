@@ -5,77 +5,96 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: raphael <raphael@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/28 18:13:56 by raphael           #+#    #+#             */
-/*   Updated: 2024/07/28 18:14:07 by raphael          ###   ########.fr       */
+/*   Created: 2024/07/29 16:17:42 by raphael           #+#    #+#             */
+/*   Updated: 2024/07/29 16:17:54 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdlib.h>
 
 static void	free_split(char **split, int words)
 {
-    int i;
+	int	i;
 
-    for (i = 0; i < words; i++)
-        free(split[i]);
-    free(split);
+	i = 0;
+	while (i < words)
+	{
+		free(split[i]);
+		i++;
+	}
+	free(split);
 }
 
 static int	count_words(const char *s, char c)
 {
-    int count;
-    int in_substring;
-    int i;
+	int	count;
+	int	in_substring;
+	int	i;
 
-    count = 0;
-    in_substring = 0;
-    i = 0;
-    while (s[i])
-    {
-        if (s[i] != c && in_substring == 0)
-        {
-            in_substring = 1;
-            count++;
-        }
-        else if (s[i] == c)
-            in_substring = 0;
-        i++;
-    }
-    return (count);
+	count = 0;
+	in_substring = 0;
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] != c && in_substring == 0)
+		{
+			in_substring = 1;
+			count++;
+		}
+		else if (s[i] == c)
+			in_substring = 0;
+		i++;
+	}
+	return (count);
+}
+
+static char	*get_next_word(char const *s, char c, int *index)
+{
+	int	start;
+	int	len;
+
+	while (s[*index] && s[*index] == c)
+		(*index)++;
+	start = *index;
+	while (s[*index] && s[*index] != c)
+		(*index)++;
+	len = *index - start;
+	return (ft_substr(s, start, len));
+}
+
+static char	**allocate_and_fill(char const *s, char c)
+{
+	char	**split;
+	int		count;
+	int		index;
+	int		i;
+	char	*word;
+
+	count = count_words(s, c);
+	split = malloc((count + 1) * sizeof(char *));
+	if (!split)
+		return (NULL);
+	index = 0;
+	i = 0;
+	while (i < count)
+	{
+		word = get_next_word(s, c, &index);
+		if (!word)
+		{
+			free_split(split, i);
+			return (NULL);
+		}
+		split[i] = word;
+		i++;
+	}
+	split[count] = NULL;
+	return (split);
 }
 
 char	**ft_split(char const *s, char c)
 {
-    char	**split;
-    int		count;
-    int		count2;
-    int		start;
-
-    if (!s)
-        return (NULL);
-    split = malloc((count_words(s, c) + 1) * sizeof(char *));
-    if (!split)
-        return (NULL);
-    count = 0;
-    count2 = 0;
-    while (s[count])
-    {
-        while (s[count] && s[count] == c)
-            count++;
-        start = count;
-        while (s[count] && s[count] != c)
-            count++;
-        if (start < count)
-        {
-            split[count2] = ft_substr(s, start, count - start);
-            if (!split[count2])
-            {
-                free_split(split, count2);
-                return (NULL);
-            }
-            count2++;
-        }
-    }
-    split[count2] = NULL;
-    return (split);
+	if (!s)
+		return (NULL);
+	return (allocate_and_fill(s, c));
 }
