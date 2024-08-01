@@ -9,9 +9,9 @@ RM = rm -f
 MKDIR = mkdir -p
 
 # Répertoire pour les fichiers objets
-OBJDIR = objects
+OBJDIR = ../objects
 
-# Fichiers sources et objets
+# Fichiers, sources et objets
 FILES =	ft_isalpha \
 		ft_isdigit \
 		ft_isalnum \
