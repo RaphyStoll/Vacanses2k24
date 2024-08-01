@@ -17,3 +17,6 @@ char	*get_next_line(int fd)
 {
 	ssize_t bytesRead = read(fd, buffer, sizeof(buffer))
 }
+
+
+
